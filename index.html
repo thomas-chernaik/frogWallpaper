@@ -7,7 +7,7 @@
 <!-- Import Futura font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Futura:wght@700&display=swap">
 <!-- Import Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-eQ9fg8I1u9FJu5Y3kH/kLI8LwGks/91B8GcW2S9EJS6GieaNcOVP6fPEv2QL+kgV1wwlcloKuRr8O1y9mCUbGw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
     body, html {
         margin: 0;
@@ -100,7 +100,7 @@
                         currentVideo = "nighttime";
                     } else if (currentTime < sunsetTime && currentTime > sunriseTime && currentVideo === "nighttime") {
                         // Update video source to daytime
-                        video.src = "https://www.dropbox.com/scl/fi/7ly5puelvff8tpx9dzom4/LiveWallpaperPC.com-Gliding-Frog-Day-3840x2160.mp4?rlkey=jg4q25lq5nbuiebqin09x105t&dl=1";
+                        video.src = "Videos/daytime.mp4";
                         currentVideo = "daytime";
                     }
                 })
