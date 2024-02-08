@@ -96,7 +96,7 @@
                     var sunriseTime = new Date(data.results.sunrise);
                     if (currentTime > sunsetTime || currentTime < sunriseTime && currentVideo === "daytime") {
                         // Update video source to nighttime
-                        video.src = "https://www.dropbox.com/scl/fi/r6yptn18wxkz324wghoqy/LiveWallpaperPC.com-Gliding-Frog-Night-3840x2160.mp4?rlkey=i80z3u4jgkrxtw9ybulcirdko&dl=1";
+                        video.src = "Videos/nighttime.mp4";
                         currentVideo = "nighttime";
                     } else if (currentTime < sunsetTime && currentTime > sunriseTime && currentVideo === "nighttime") {
                         // Update video source to daytime
