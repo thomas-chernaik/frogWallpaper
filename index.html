@@ -41,6 +41,32 @@
         font-size: 24px;
         text-align: center;
     }
+     #textInputContainer {
+        position: absolute;
+        bottom: 17%;
+        left: 0;
+        width: 100%; /* Fill the entire width of the screen */
+        text-align: center; /* Center-align the input field */
+    }
+    #textInput {
+        background-color: transparent;
+        border: none;
+        color: #7c6f6f; /* Lighter color */
+        font-family: 'Futura', sans-serif;
+        font-weight: 600; /* Bold */
+        font-size: 36px;
+        text-align: center;
+
+        outline: none; /* Hide outline even when selected */
+        width: 100%; /* Fill the entire width of the container */
+    }
+    #textInputUnderscore {
+        display: inline-block;
+        border-bottom: 1px solid #d9d8d8; /* Visible underline */
+        /* force size */
+        width: 30%;
+        height: 1px;
+    }
     @font-face {
         font-family: 'Futura';
         src: url('fonts/font.woff2') format('woff2');
@@ -50,6 +76,11 @@
 </style>
 </head>
 <body>
+    <div id="textInputContainer">
+    <input id="textInput" type="text" placeholder="Search">
+    <div id="textInputUnderscore"></div>
+</div>
+
     <video id="myVideo" autoplay muted loop>
         <source src="Videos/daytime.mp4" type="video/mp4">
         Your browser does not support the video tag.
@@ -123,6 +154,14 @@
         setInterval(updateDateTime, 60000);
         // Call the function once to display initially
         updateDateTime();
+
+        //function to get the value of the input field and redirect to a duckduckgo search when enter is pressed
+        document.getElementById("textInput").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                var text = document.getElementById("textInput").value;
+                window.location.href = "https://duckduckgo.com/?q=" + text;
+            }
+        });
     </script>
 </body>
 </html>
