@@ -164,6 +164,10 @@
         });
         //set the focus to the input field
         document.getElementById("textInput").focus();
+        //if anywhere is clicked, set the focus to the input field
+        document.addEventListener("click", function() {
+            document.getElementById("textInput").focus();
+        });
     </script>
 </body>
 </html>
