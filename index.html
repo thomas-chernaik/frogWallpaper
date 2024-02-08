@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Video based on Time</title>
+<!-- Import Futura font -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Futura:wght@700&display=swap">
+<!-- Import Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-eQ9fg8I1u9FJu5Y3kH/kLI8LwGks/91B8GcW2S9EJS6GieaNcOVP6fPEv2QL+kgV1wwlcloKuRr8O1y9mCUbGw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    #overlay {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #e07c8b; /* Light Pink */
+        font-family: 'Futura', sans-serif;
+        font-weight: 700; /* Bold */
+        font-size: 48px;
+        text-align: center;
+    }
+    #date {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #984f87; /* Light Pink */
+        font-family: 'Protest Strike', sans-serif; /* Use your specific font here */
+        font-size: 24px;
+        text-align: center;
+    }
+    @font-face {
+        font-family: 'Protest Strike';
+        src: url('fonts/ProtestStrike-Regular.ttf') format('truetype');
+    }
+</style>
+</head>
+<body>
+    <video id="myVideo" autoplay muted loop>
+        <source src="Videos/daytime.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div id="overlay"></div>
+    <div id="date"></div>
+    <script>
+        // Get the video element
+        var video = document.getElementById("myVideo");
+
+        // Update the time and date display
+        function updateDateTime() {
+            var currentTime = new Date();
+            var hours = currentTime.getHours();
+            var minutes = currentTime.getMinutes();
+            var day = currentTime.getDate();
+            var month = currentTime.getMonth(); // Months are zero based
+            var year = currentTime.getFullYear();
+            var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            // Format the time string
+            //add a 0 in front of the minutes if it is less than 10
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            //add a 0 in front of the hours if it is less than 10
+            if (hours < 10) {
+                hours = "0" + hours;
+            }
+            var timeString = hours + ":" + minutes;
+            // Format the date string
+            var dateString = daysOfWeek[currentTime.getDay()] + " " + getWordForm(day) + " " + monthsOfYear[month] + " " + year;
+            // Display the time and date
+            document.getElementById("overlay").innerHTML = (isDaytime(currentTime) ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>') + ' ' + timeString;
+            document.getElementById("date").innerText = dateString;
+
+            // Fetch sunset time from API
+            fetch("https://api.sunrise-sunset.org/json?lat=53.8013&lng=-1.5485&formatted=0")
+                .then(response => response.json())
+                .then(data => {
+                    var sunsetTime = new Date(data.results.sunset);
+                    var sunriseTime = new Date(data.results.sunrise);
+                    if (currentTime > sunsetTime || currentTime < sunriseTime) {
+                        // Update video source to nighttime
+                        video.src = "https://www.dropbox.com/scl/fi/r6yptn18wxkz324wghoqy/LiveWallpaperPC.com-Gliding-Frog-Night-3840x2160.mp4?rlkey=i80z3u4jgkrxtw9ybulcirdko&dl=1";
+                    } else {
+                        // Update video source to daytime
+                        video.src = "https://www.dropbox.com/scl/fi/7ly5puelvff8tpx9dzom4/LiveWallpaperPC.com-Gliding-Frog-Day-3840x2160.mp4?rlkey=jg4q25lq5nbuiebqin09x105t&dl=1";
+                    }
+                })
+                .catch(error => console.error('Error fetching sunset time:', error));
+        }
+
+        // Function to get the word form of the day
+        function getWordForm(day) {
+            var suffix;
+            switch (day % 10) {
+                case 1:
+                    suffix = "st";
+                    break;
+                case 2:
+                    suffix = "nd";
+                    break;
+                case 3:
+                    suffix = "rd";
+                    break;
+                default:
+                    suffix = "th";
+            }
+            return day + suffix;
+        }
+
+        // Function to check if it's daytime
+        function isDaytime(currentTime) {
+            var hours = currentTime.getHours();
+            return hours >= 6 && hours < 18; // Assuming daytime is between 6 AM and 6 PM
+        }
+
+        // Update time and date display every minute
+        setInterval(updateDateTime, 60000);
+        // Call the function once to display initially
+        updateDateTime();
+    </script>
+</body>
+</html>
