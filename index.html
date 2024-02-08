@@ -59,6 +59,8 @@
     <script>
         // Get the video element
         var video = document.getElementById("myVideo");
+        // Global variable to store the currently playing video
+        var currentVideo = "daytime";
 
         // Update the time and date display
         function updateDateTime() {
@@ -92,12 +94,14 @@
                 .then(data => {
                     var sunsetTime = new Date(data.results.sunset);
                     var sunriseTime = new Date(data.results.sunrise);
-                    if (currentTime > sunsetTime || currentTime < sunriseTime) {
+                    if (currentTime > sunsetTime || currentTime < sunriseTime && currentVideo === "daytime") {
                         // Update video source to nighttime
                         video.src = "https://www.dropbox.com/scl/fi/r6yptn18wxkz324wghoqy/LiveWallpaperPC.com-Gliding-Frog-Night-3840x2160.mp4?rlkey=i80z3u4jgkrxtw9ybulcirdko&dl=1";
-                    } else {
+                        currentVideo = "nighttime";
+                    } else if (currentTime < sunsetTime && currentTime > sunriseTime && currentVideo === "nighttime") {
                         // Update video source to daytime
                         video.src = "https://www.dropbox.com/scl/fi/7ly5puelvff8tpx9dzom4/LiveWallpaperPC.com-Gliding-Frog-Day-3840x2160.mp4?rlkey=jg4q25lq5nbuiebqin09x105t&dl=1";
+                        currentVideo = "daytime";
                     }
                 })
                 .catch(error => console.error('Error fetching sunset time:', error));
