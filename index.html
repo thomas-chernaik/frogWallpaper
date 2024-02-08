@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dynamic Video based on Time</title>
-<!-- Import Futura font -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Futura:wght@700&display=swap">
 <!-- Import Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
@@ -27,7 +25,7 @@
         bottom: 10%;
         left: 50%;
         transform: translateX(-50%);
-        color: #e07c8b; /* Light Pink */
+        color: #dc6b7b; /* Light Pink */
         font-family: 'Futura', sans-serif;
         font-weight: 700; /* Bold */
         font-size: 48px;
@@ -38,14 +36,16 @@
         bottom: 5%;
         left: 50%;
         transform: translateX(-50%);
-        color: #984f87; /* Light Pink */
+        color: #88427a; /* Light Pink */
         font-family: 'Protest Strike', sans-serif; /* Use your specific font here */
         font-size: 24px;
         text-align: center;
     }
     @font-face {
+        font-family: 'Futura';
+        src: url('fonts/font.woff2') format('woff2');
         font-family: 'Protest Strike';
-        src: url('fonts/ProtestStrike-Regular.ttf') format('truetype');
+        src: url("fonts/ProtestStrike-Regular.ttf") format("truetype");
     }
 </style>
 </head>
@@ -59,8 +59,6 @@
     <script>
         // Get the video element
         var video = document.getElementById("myVideo");
-        // Global variable to store the currently playing video
-        var currentVideo = "daytime";
 
         // Update the time and date display
         function updateDateTime() {
@@ -73,14 +71,6 @@
             var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             var monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             // Format the time string
-            //add a 0 in front of the minutes if it is less than 10
-            if (minutes < 10) {
-                minutes = "0" + minutes;
-            }
-            //add a 0 in front of the hours if it is less than 10
-            if (hours < 10) {
-                hours = "0" + hours;
-            }
             var timeString = hours + ":" + minutes;
             // Format the date string
             var dateString = daysOfWeek[currentTime.getDay()] + " " + getWordForm(day) + " " + monthsOfYear[month] + " " + year;
@@ -93,15 +83,12 @@
                 .then(response => response.json())
                 .then(data => {
                     var sunsetTime = new Date(data.results.sunset);
-                    var sunriseTime = new Date(data.results.sunrise);
-                    if (currentTime > sunsetTime || currentTime < sunriseTime && currentVideo === "daytime") {
+                    if (currentTime > sunsetTime) {
                         // Update video source to nighttime
                         video.src = "Videos/nighttime.mp4";
-                        currentVideo = "nighttime";
-                    } else if (currentTime < sunsetTime && currentTime > sunriseTime && currentVideo === "nighttime") {
+                    } else {
                         // Update video source to daytime
                         video.src = "Videos/daytime.mp4";
-                        currentVideo = "daytime";
                     }
                 })
                 .catch(error => console.error('Error fetching sunset time:', error));
