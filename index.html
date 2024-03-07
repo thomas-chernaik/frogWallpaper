@@ -102,27 +102,23 @@
             var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             var monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             // Format the time string
+            // Add leading zeros to minutes
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
             var timeString = hours + ":" + minutes;
             // Format the date string
             var dateString = daysOfWeek[currentTime.getDay()] + " " + getWordForm(day) + " " + monthsOfYear[month] + " " + year;
             // Display the time and date
-            document.getElementById("overlay").innerHTML = (isDaytime(currentTime) ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>') + ' ' + timeString;
-            document.getElementById("date").innerText = dateString;
+            isDaytime(currentTime).then(isDay => {
+                document.getElementById("overlay").innerHTML = (isDay ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>') + ' ' + timeString;
+                document.getElementById("date").innerText = dateString;
+            });
 
-            // Fetch sunset time from API
-            fetch("https://api.sunrise-sunset.org/json?lat=53.8013&lng=-1.5485&formatted=0")
-                .then(response => response.json())
-                .then(data => {
-                    var sunsetTime = new Date(data.results.sunset);
-                    if (currentTime > sunsetTime) {
-                        // Update video source to nighttime
-                        video.src = "Videos/nighttime.mp4";
-                    } else {
-                        // Update video source to daytime
-                        video.src = "Videos/daytime.mp4";
-                    }
-                })
-                .catch(error => console.error('Error fetching sunset time:', error));
+            // Change the video based on the time of day
+            isDaytime(currentTime).then(isDay => {
+                video.src = isDay ? "Videos/daytime.mp4" : "Videos/nighttime.mp4";
+            });
         }
 
         // Function to get the word form of the day
@@ -145,10 +141,21 @@
         }
 
         // Function to check if it's daytime
-        function isDaytime(currentTime) {
-            var hours = currentTime.getHours();
-            return hours >= 6 && hours < 18; // Assuming daytime is between 6 AM and 6 PM
-        }
+       function isDaytime(currentTime) {
+        return new Promise((resolve, reject) => {
+            fetch("https://api.sunrise-sunset.org/json?lat=53.8013&lng=-1.5485&formatted=0")
+                .then(response => response.json())
+                .then(data => {
+                    var sunsetTime = new Date(data.results.sunset);
+                    var sunriseTime = new Date(data.results.sunrise);
+                    resolve(currentTime < sunsetTime || currentTime > sunriseTime);
+                })
+                .catch(error => {
+                    console.error('Error fetching sunset time:', error);
+                    reject(error);
+                });
+        });
+    }
 
         // Update time and date display every minute
         setInterval(updateDateTime, 60000);
